@@ -25,16 +25,5 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 
-config :ecto_it,
-  database: "ecto_test_default"
-
 config :ecto_it, EctoIt.Repo,
   adapter: Ecto.Adapters.Postgres
-
-config :ecto_it, Ecto.Adapters.Postgres,
-  username: "postgres",
-  url: "ecto://postgres:postgres@localhost/"
-
-config :ecto_it, Ecto.Adapters.MySQL,
-  username: "root",
-  url: "ecto://root@localhost/"

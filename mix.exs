@@ -13,7 +13,18 @@ defmodule EctoIt.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [applications: [:logger],
-     mod: {EctoIt, []}]
+     mod: {EctoIt, []},
+     env: [
+       {:database, "ecto_test_default"},
+       {EctoIt.Repo, [adapter: Ecto.Adapters.Postgres]},
+       {Ecto.Adapters.Postgres,
+         [username: "postgres",
+          url: "ecto://postgres:postgres@localhost/"]},
+       {Ecto.Adapters.MySQL,
+         [username: "root",
+          url: "ecto://root@localhost/"]}
+     ]
+   ]
   end
 
   # Dependencies can be Hex packages:
