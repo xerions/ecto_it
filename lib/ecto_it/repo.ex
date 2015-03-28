@@ -1,16 +1,17 @@
 defmodule EctoIt.Repo do
 
   def unquote(:"$handle_undefined_function")(program, args) do
-    Application.put_env(:ecto_it, EctoIt.get_repo(), adapter: EctoIt.get_adapter(), url: EctoIt.get_url(Mix.env))
-    EctoIt.get_adapter().storage_up(username: EctoIt.get_username(Mix.env), database: "ecto_test_default")
-    case Mix.env do
-      :pg ->
-        EctoIt.Repo.Postgres.start_link
-      _ ->
-        EctoIt.Repo.MySQL.start_link
-    end
+    module = case Mix.env do
+               :pg ->
+                 EctoIt.Repo.Postgres
+               _ ->
+                 EctoIt.Repo.MySQL
+             end
+		:io.format("module ~p~n", [module])
+		:io.format("program ~p~n", [program])
+		:io.format("args ~p~n", [args])
+    apply(module, program, args)
   end
-
 end
 
 defmodule EctoIt.Repo.Postgres do

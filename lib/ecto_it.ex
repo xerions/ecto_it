@@ -3,6 +3,8 @@ defmodule EctoIt do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
+    Application.put_env(:ecto_it, EctoIt.get_repo(), adapter: EctoIt.get_adapter(), url: EctoIt.get_url(Mix.env))
+    EctoIt.get_adapter().storage_up(username: EctoIt.get_username(Mix.env), database: "ecto_test_default")
     Supervisor.start_link([worker(EctoIt.Repo, [])], [strategy: :one_for_one, name: EctoIt.Supervisor])
   end
 
