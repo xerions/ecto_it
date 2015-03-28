@@ -7,9 +7,6 @@ defmodule EctoIt.Repo do
                _ ->
                  EctoIt.Repo.MySQL
              end
-		:io.format("module ~p~n", [module])
-		:io.format("program ~p~n", [program])
-		:io.format("args ~p~n", [args])
     apply(module, program, args)
   end
 end
