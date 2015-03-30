@@ -3,28 +3,45 @@ defmodule EctoIt do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
-    database = Application.get_env(:ecto_it, :database)
-    adapter = get_adapter()
-    adapter_config = Application.get_env(:ecto_it, adapter)
-    Application.put_env(:ecto_it, EctoIt.Repo, adapter: adapter, url: (adapter_config[:url] <> database))
-    case adapter.storage_up(username: adapter_config[:username], database: database) do
-      {:error, :already_up} -> true
-      :ok -> true
-    end
-    Supervisor.start_link([ worker(EctoIt.Repo, []) ], [strategy: :one_for_one, name: EctoIt.Supervisor])
+    Application.put_env(:ecto_it, EctoIt.get_repo(), adapter: EctoIt.get_adapter(), url: EctoIt.get_url(Mix.env))
+    EctoIt.get_adapter().storage_up(username: EctoIt.get_username(Mix.env), database: "ecto_test_default")
+    Supervisor.start_link([worker(EctoIt.Repo, [])], [strategy: :one_for_one, name: EctoIt.Supervisor])
   end
 
   def stop(_) do
-    adapter = get_adapter()
-    database = Application.get_env(:ecto_it, :database)
-    adapter_config = Application.get_env(:ecto_it, adapter)
-    EctoIt.Repo.adapter.storage_down(database: database, username: adapter_config[:username])
+    get_adapter().storage_down(database: "ecto_test_default", username: get_username(Mix.env))
   end
 
-  defp get_adapter() do
+  def get_repo() do
+    case Mix.env do
+      :pg -> EctoIt.Repo.Postgres
+      _ -> EctoIt.Repo.MySQL
+    end
+  end
+
+  def get_adapter() do
     case Mix.env do
       :pg -> Ecto.Adapters.Postgres
       _   -> Ecto.Adapters.MySQL
     end
   end
+
+  def get_url(:pg) do
+    "ecto://postgres:postgres@localhost/ecto_test_default"
+  end
+
+  def get_url(_) do
+    "ecto://root@localhost/ecto_test_default"
+  end
+
+  def get_username(:pg) do
+    "postgres"
+  end
+
+  def get_username(_) do
+  end
+
+  def stop() do
+  end
+
 end

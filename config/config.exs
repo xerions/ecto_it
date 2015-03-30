@@ -25,5 +25,5 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 
-config :ecto_it, EctoIt.Repo,
-  adapter: Ecto.Adapters.Postgres
+#config :ecto_it, EctoIt.Repo
+#  adapter: Ecto.Adapters.Postgres
