@@ -1,11 +1,33 @@
 defmodule EctoIt.Mixfile do
   use Mix.Project
+  @version "0.1.0"
+  @github "https://github.com/xerions/ecto_it"
 
   def project do
     [app: :ecto_it,
-     version: "0.0.1",
+     version: "0.1.0",
      elixir: "~> 1.1-dev",
+     # Hex
+     description: description,
+     package: package,
+
+     # Docs
+     name: "Ecto IT",
+     docs: [source_ref: "v#{@version}",
+            source_url: @github],
      deps: deps]
+  end
+
+  defp description do
+    """
+    Ecto IT is library for writing integration tests(with database backend) for ecto-based applications.
+    """
+  end
+
+  defp package do
+    [contributors: ["Dmitry Russ(Aleksandrov)"],
+     licenses: ["Apache 2.0"],
+     links: %{"GitHub" => @github}]
   end
 
   # Configuration for the OTP application
@@ -39,6 +61,8 @@ defmodule EctoIt.Mixfile do
   defp deps do
     [{:postgrex, ">= 0.0.0"},
      {:mariaex, ">= 0.0.0"},
-     {:ecto, "~> 0.10.0"}]
+     {:ex_doc, "~> 0.7", only: :docs},
+     {:earmark, "~> 0.1", only: :docs},
+     {:ecto, "~> 0.10.1"}]
   end
 end

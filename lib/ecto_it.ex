@@ -1,47 +1,46 @@
 defmodule EctoIt do
+  @moduledoc """
+  This module implements the Application callbacks for starting and stoping EctoIt
+  application, which automaticly make storage_up on start and storage_down on stop.
+
+  ## Configuration
+
+  Your test enviroments can be something like it
+
+      config :ecto_it, Ecto.Adapters.Postgres,
+        username: "postgres",
+        url: "ecto://postgres:postgres@localhost/"
+
+      config :ecto_it, Ecto.Adapters.MySQL,
+        username: "root",
+        url: "ecto://root@localhost/"
+
+      config :ecto_it,
+        database: "your_database_test"
+
+  """
   use Application
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
-    Application.put_env(:ecto_it, EctoIt.get_repo(), adapter: EctoIt.get_adapter(), url: EctoIt.get_url(Mix.env))
-    EctoIt.get_adapter().storage_up(username: EctoIt.get_username(Mix.env), database: "ecto_test_default")
+    Application.put_env(:ecto_it, EctoIt.Repo.__repo_module__(), adapter: EctoIt.Repo.adapter(), url: get_url())
+    EctoIt.Repo.adapter().storage_up(username: username, database: database)
     Supervisor.start_link([worker(EctoIt.Repo, [])], [strategy: :one_for_one, name: EctoIt.Supervisor])
   end
 
   def stop(_) do
-    get_adapter().storage_down(database: "ecto_test_default", username: get_username(Mix.env))
+    EctoIt.Repo.adapter().storage_down(database: database, username: username)
   end
 
-  def get_repo() do
-    case Mix.env do
-      :pg -> EctoIt.Repo.Postgres
-      _ -> EctoIt.Repo.MySQL
-    end
+  def get_url() do
+    Application.get_env(:ecto_it, EctoIt.Repo.adapter)[:url] <> database
   end
 
-  def get_adapter() do
-    case Mix.env do
-      :pg -> Ecto.Adapters.Postgres
-      _   -> Ecto.Adapters.MySQL
-    end
+  def username() do
+    Application.get_env(:ecto_it, EctoIt.Repo.adapter)[:username]
   end
 
-  def get_url(:pg) do
-    "ecto://postgres:postgres@localhost/ecto_test_default"
+  def database do
+    Application.get_env(:ecto_it, :database, "ecto_test_default")
   end
-
-  def get_url(_) do
-    "ecto://root@localhost/ecto_test_default"
-  end
-
-  def get_username(:pg) do
-    "postgres"
-  end
-
-  def get_username(_) do
-  end
-
-  def stop() do
-  end
-
 end
