@@ -1,11 +1,11 @@
 defmodule EctoIt.Mixfile do
   use Mix.Project
-  @version "0.1.0"
+  @version "0.1.1"
   @github "https://github.com/xerions/ecto_it"
 
   def project do
     [app: :ecto_it,
-     version: "0.1.0",
+     version: @version,
      elixir: "~> 1.1-dev",
      # Hex
      description: description,
@@ -63,6 +63,6 @@ defmodule EctoIt.Mixfile do
      {:mariaex, ">= 0.0.0"},
      {:ex_doc, "~> 0.7", only: :docs},
      {:earmark, "~> 0.1", only: :docs},
-     {:ecto, "~> 0.10.1"}]
+     {:ecto, "~> 0.11.0"}]
   end
 end
