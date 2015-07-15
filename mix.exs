@@ -6,7 +6,6 @@ defmodule EctoIt.Mixfile do
   def project do
     [app: :ecto_it,
      version: @version,
-     elixir: "~> 1.1-dev",
      # Hex
      description: description,
      package: package,
