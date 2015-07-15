@@ -1,6 +1,6 @@
 defmodule EctoIt.Mixfile do
   use Mix.Project
-  @version "0.1.2"
+  @version "0.1.3-dev"
   @github "https://github.com/xerions/ecto_it"
 
   def project do
