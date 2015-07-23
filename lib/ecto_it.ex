@@ -23,21 +23,21 @@ defmodule EctoIt do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
-    Application.put_env(:ecto_it, EctoIt.Repo.__repo_module__(), adapter: EctoIt.Repo.adapter(), url: get_url())
-    EctoIt.Repo.adapter().storage_up(username: username, database: database)
+    Application.put_env(:ecto_it, EctoIt.Repo.__repo_module__(), url: get_url())
+    Ecto.Storage.up(EctoIt.Repo)
     Supervisor.start_link([worker(EctoIt.Repo, [])], [strategy: :one_for_one, name: EctoIt.Supervisor])
   end
 
   def stop(_) do
-    EctoIt.Repo.adapter().storage_down(database: database, username: username)
+    Ecto.Storage.down(EctoIt.Repo)
   end
 
   def get_url() do
-    Application.get_env(:ecto_it, EctoIt.Repo.adapter)[:url] <> database
+    Application.get_env(:ecto_it, EctoIt.Repo.__adapter__)[:url] <> database
   end
 
   def username() do
-    Application.get_env(:ecto_it, EctoIt.Repo.adapter)[:username]
+    Application.get_env(:ecto_it, EctoIt.Repo.__adapter__)[:username]
   end
 
   def database do
